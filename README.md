@@ -3,15 +3,16 @@
 ## Setup
 
 1. First, you need to register an app which will act on behalf of your account. With
-   Google (GMail), just go [Cloud Credentials](https://console.cloud.google.com/apis/credentials)
+   Google (GMail), just go to [Cloud Credentials](https://console.cloud.google.com/apis/credentials)
    and click "+ CREATE CREDENTIALS" -> "OAuth client ID". (you have to configure the
-   *Consent Screen* before)
+   *Consent Screen* beforehand)
 2. Make a copy of the [vault.yaml](./devdata/vault.yaml) somewhere safe and change the
    following keys:
    - `username`: Your e-mail address
    - `client_id`: Your app client ID (taken from above)
    - `client_secret`: Your app client secret (taken from above)
-   - `refresh_token`: You can leave it like that since will be overridden by the robot
+   - `refresh_token`: You can leave it like that since this will be overridden by the
+     robot
 3. Change the `RPA_SECRET_FILE` path in the [env.json](./devdata/env.json) in order to
    point to your secrets *.yaml* file above.
 

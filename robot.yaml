@@ -1,0 +1,14 @@
+tasks:
+  Init OAuth Flow:
+    robotTaskName: Init OAuth Flow
+  Send Email By Token:
+    robotTaskName: Send Email By Token
+
+condaConfigFile: conda.yaml
+artifactsDir: output
+PATH:
+  - .
+PYTHONPATH:
+  - .
+ignoreFiles:
+  - .gitignore

@@ -28,8 +28,7 @@ def generate_permission_url(client_id):
         "scope": "https://mail.google.com",
         "response_type": "code",
     }
-    url = _parse_url(auth_url, params=params)
-    return url
+    return _parse_url(auth_url, params=params)
 
 
 def authorize_and_get_refresh_token(client_id, client_secret, *, auth_code):

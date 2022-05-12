@@ -6,6 +6,10 @@
    Google (GMail), just go to [Cloud Credentials](https://console.cloud.google.com/apis/credentials)
    and click "+ CREATE CREDENTIALS" -> "OAuth client ID". (you have to configure the
    *Consent Screen* beforehand)
+   - During the configuration don't forget to add the `https://mail.google.com/` GMail
+     API scope.
+   - If you can't find it, enable [Gmail API](https://console.cloud.google.com/marketplace/product/google/gmail.googleapis.com)
+     for being able to use the e-mail scope (app permission) above.
 2. Make a copy of the [vault.yaml](./devdata/vault.yaml) somewhere safe and change the
    following keys:
    - `username`: Your e-mail address

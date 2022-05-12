@@ -43,6 +43,7 @@ Send Email By Token
     ${password} =    Generate Oauth2 String
     ...    ${creds}[client_id]    ${creds}[client_secret]
     ...    refresh_token=${creds}[refresh_token]    username=${creds}[username]
+    # Log To Console    Password: ${password}
 
     Authorize    account=${creds}[username]    password=${password}    is_oauth=${True}
     Send Message    sender=${creds}[username]    recipients=${creds}[username]

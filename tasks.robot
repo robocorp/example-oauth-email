@@ -13,6 +13,10 @@ Library    RPA.RobotLogListener
 Suite Setup    Hide Secrets From Logging
 
 
+*** Variables ***
+${SECRET}    email_oauth
+
+
 *** Keywords ***
 Hide Secrets From Logging
     ${protected} =    Create List    Authorize And Get Refresh Token
@@ -22,7 +26,7 @@ Hide Secrets From Logging
 
 *** Tasks ***
 Init OAuth Flow
-    ${creds} =    Get Secret    oauth
+    ${creds} =    Get Secret    ${SECRET}
     ${url} =    Generate Permission Url    ${creds}[client_id]
     Log To Console    Permission URL: ${url}
     Open Available Browser    ${url}
@@ -37,13 +41,13 @@ Init OAuth Flow
     Log    The refresh token was just saved in the Vault. (keep it private)
     
 Send Email By Token
-    ${creds} =    Get Secret    oauth
+    ${creds} =    Get Secret    ${SECRET}
     # Once the password is generated, you can use it for one hour, then you'll have to
     #  generate a new one. (as it expires)
     ${password} =    Generate Oauth2 String
     ...    ${creds}[client_id]    ${creds}[client_secret]
     ...    refresh_token=${creds}[refresh_token]    username=${creds}[username]
-    # Log To Console    Password: ${password}
+    # Log To Console    Password: ${password}  # don't leak it
 
     Authorize    account=${creds}[username]    password=${password}    is_oauth=${True}
     Send Message    sender=${creds}[username]    recipients=${creds}[username]

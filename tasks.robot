@@ -21,18 +21,18 @@ ${SECRETS}
 
 *** Keywords ***
 Setup And Hide Secrets From Logging
-    ${protected} =    Create List    Authorize And Get Token
+    @{protected} =    Create List    Authorize And Get Token
     ...    Generate Google Oauth2 String    Set To Dictionary
     Register Protected Keywords    ${protected}
 
     ${secret_name} =    Get Work Item Variable    secret_name
-    ${secrets} =    Get Secret    ${secret_name}
+    &{secrets} =    Get Secret    ${secret_name}
     Set Global Variable    ${SECRETS}    ${secrets}
 
 
 *** Tasks ***
 Init OAuth Flow
-    ${config} =    Get Work Item Variables
+    &{config} =    Get Work Item Variables
     ${url} =    Generate Permission Url    ${SECRETS}[client_id]
     ...    provider=${config}[provider]    tenant=${config}[tenant]
     Log To Console    Permission URL: ${url}
@@ -41,7 +41,7 @@ Init OAuth Flow
     Add heading       Enter authorization code
     Add text input    code    label=Code
     ${result} =    Run dialog
-    ${token} =    Authorize And Get Token    ${SECRETS}[client_id]
+    &{token} =    Authorize And Get Token    ${SECRETS}[client_id]
     ...    ${SECRETS}[client_secret]    auth_code=${result.code}
     ...    provider=${config}[provider]    tenant=${config}[tenant]
     Set To Dictionary    ${SECRETS}    token    ${token}

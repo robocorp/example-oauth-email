@@ -5,8 +5,8 @@
 1. First, you need to register an app which will act on behalf of your account. With
    Google (GMail), just go to
    [Cloud Credentials](https://console.cloud.google.com/apis/credentials)
-   and click "+ CREATE CREDENTIALS" -> "OAuth client ID". (you have to configure the
-   *Consent Screen* beforehand)
+   and click "+ CREATE CREDENTIALS" -> "OAuth client ID" (Desktop app). You have to
+   configure the *Consent Screen* beforehand:
    - During the configuration don't forget to add the `https://mail.google.com/` GMail
      API scope. (so you give the app full permissions on your mailbox)
    - If you can't find the scope, enable

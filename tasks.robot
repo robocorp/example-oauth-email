@@ -70,8 +70,8 @@ Send Google Email
 Send Microsoft Email
     ${username} =    Get Work Item Variable    username
 
-    ExtendedExchange.Authorize    ${username}    autodiscover=${True}
-    # ...    server=outlook.office365.com  # switch `autodiscover` off with this
+    ExtendedExchange.Authorize    ${username}
+    ...    autodiscover=${False}    server=outlook.office365.com
     ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID

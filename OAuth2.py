@@ -9,6 +9,8 @@ import json
 import urllib.parse as urlparse
 import urllib.request as urlrequest
 
+import jwt
+
 
 PROVIDERS = {
     "google": {
@@ -38,7 +40,7 @@ def _post_data(url, *, params):
 
 
 def generate_permission_url(client_id, *, provider, tenant=None):
-    config = PROVIDERS[provider.lower()]
+    config = PROVIDERS[provider]
     auth_url = config["auth_url"].format(tenant=tenant or "common")
     params = {
         "client_id": client_id,
@@ -52,7 +54,7 @@ def generate_permission_url(client_id, *, provider, tenant=None):
 def authorize_and_get_token(
         client_id, client_secret, *, auth_code, provider, tenant=None
     ):
-    config = PROVIDERS[provider.lower()]
+    config = PROVIDERS[provider]
     token_url = config["token_url"].format(tenant=tenant or "common")
     params = {
         "client_id": client_id,
@@ -61,7 +63,15 @@ def authorize_and_get_token(
         "code": auth_code,
         "grant_type": "authorization_code",
     }
-    return _post_data(token_url, params=params)
+    token = _post_data(token_url, params=params)
+    if provider == "microsoft":
+        access_token = jwt.decode(
+            token["access_token"], options={"verify_signature": False}
+        )
+        # Required by `exchangelib` in order to automatically trigger the token refresh
+        #  when it expires. (otherwise "401 Unauthorized" is raised)
+        token["expires_at"] = access_token["exp"]
+    return token
 
 
 def generate_google_oauth2_string(client_id, client_secret, *, token, username):

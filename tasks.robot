@@ -6,13 +6,12 @@ Library    Collections
 Library    OAuth2  # robot internal library for the Authorization Code flow
 Library    RPA.Browser.Selenium
 Library    RPA.Dialogs
-Library    RPA.Email.Exchange
 Library    RPA.Email.ImapSmtp    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com
 Library    RPA.Robocorp.Vault
 Library    RPA.RobotLogListener
 Library    RPA.Robocorp.WorkItems
 
-Suite Setup    Setup And Hide Secrets From Logging
+Suite Setup    Secrets Setup
 
 
 *** Variables ***
@@ -20,14 +19,15 @@ ${SECRETS}
 
 
 *** Keywords ***
-Setup And Hide Secrets From Logging
+Secrets Setup
     @{protected} =    Create List    Authorize And Get Token
     ...    Generate Google Oauth2 String    Set To Dictionary
     Register Protected Keywords    ${protected}
 
     ${secret_name} =    Get Work Item Variable    secret_name
-    &{secrets} =    Get Secret    ${secret_name}
+    ${secrets} =    Get Secret    ${secret_name}
     Set Global Variable    ${SECRETS}    ${secrets}
+    Import Library    ExtendedExchange    secret_name=${secret_name}
 
 
 *** Tasks ***
@@ -41,7 +41,7 @@ Init OAuth Flow
     Add heading       Enter authorization code
     Add text input    code    label=Code
     ${result} =    Run dialog
-    &{token} =    Authorize And Get Token    ${SECRETS}[client_id]
+    ${token} =    Authorize And Get Token    ${SECRETS}[client_id]
     ...    ${SECRETS}[client_secret]    auth_code=${result.code}
     ...    provider=${config}[provider]    tenant=${config}[tenant]
     Set To Dictionary    ${SECRETS}    token    ${token}
@@ -70,7 +70,8 @@ Send Google Email
 Send Microsoft Email
     ${username} =    Get Work Item Variable    username
 
-    RPA.Email.Exchange.Authorize    ${username}    autodiscover=${True}
+    ExtendedExchange.Authorize    ${username}    autodiscover=${True}
+    # ...    server=outlook.office365.com  # switch `autodiscover` off with this
     ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID
@@ -78,7 +79,7 @@ Send Microsoft Email
     # The entire token structure auto refreshes when it expires.
     ...    token=${SECRETS}[token]  # token dict (access, refresh, scopes etc.)
 
-    RPA.Email.Exchange.Send Message    recipients=${username}
+    ExtendedExchange.Send Message    recipients=${username}
     ...    subject=OAuth2 Exchange message from RPA robot
     ...    body=Congrats! You're using Modern Authentication.
     ...    save=${True}

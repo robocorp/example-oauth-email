@@ -17,6 +17,8 @@ def extended_post_ratelimited(protocol, session, *args, **kwargs):
     )
     return post_ratelimited(protocol, session, *args, **kwargs)
 
+# Monkey-patching infinite loop fix on token refresh, due to OAuth2 library bug when
+#  passing the app credentials to the "/token" endpoint.
 exchangelib_common.post_ratelimited = extended_post_ratelimited
 
 

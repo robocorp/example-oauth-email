@@ -63,6 +63,9 @@ Run with **VSCode** or **rcc** the following tasks in order:
    - Based on the client you want to send the mail with, pick from the listed Work
      Items either **google** or **microsoft**. (and continue with the same in the next
      step)
+     - Don't forget to configure your `username` (and optionally `tenant`) field in the
+       Work Items *.json* file for either [google](./devdata/work-items-in/google/work-items.json)
+       or [microsoft](./devdata/work-items-in/microsoft/work-items.json).
    - With Google, you'll see the auth code displayed in the browser window, whether
      with Microsoft you'll find it in the address bar.
 2. `Send Google/Microsoft Email`: Sends a test e-mail to yourself given the credentials

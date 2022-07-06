@@ -1,0 +1,10 @@
+[
+  {
+    "payload": {
+      "provider": "microsoft",
+      "secret_name": "email_oauth_microsoft",
+      "tenant": "ztzvn.onmicrosoft.com",
+      "username": "cosmin-robocorp@ztzvn.onmicrosoft.com"
+    }
+  }
+]

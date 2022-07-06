@@ -1,5 +1,9 @@
-email_oauth:
-  username: cosmin@robocorp.com
+email_oauth_google:
   client_id: 8104**********mkr4.apps.googleusercontent.com
   client_secret: GO***************Re6y
-  refresh_token: 1//09J***************-sFIg7oV17eI
+  token: null
+
+email_oauth_microsoft:
+  client_id: 7c110975-****--****---****--d8ef490e1218
+  client_secret: K7v**************************CdpS
+  token: null

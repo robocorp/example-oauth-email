@@ -14,5 +14,4 @@ dependencies:
       # Define pip packages here.
       # https://pypi.org/
       - PyJWT==2.4.0
-      - exchangelib==4.7.3
-      - rpaframework==15.2.0 # https://rpaframework.org/releasenotes.html
+      - rpaframework==15.7.0 # https://rpaframework.org/releasenotes.html

@@ -20,21 +20,26 @@
    Create an Exchange Online sandbox (or use your current tenant), then go to Azure
    AD's [App registrations](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps)
    and follow [these](https://docs.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth)
-   instructions. Make sure you checked the following:
+   app configuration instructions. Make sure you checked the following:
+   - Is a *private* multi-tenant app. ("Accounts in any organizational directory" is
+     checked)
    - The type of the application is a "Web App".
      - Redirect URI can be: `https://login.microsoftonline.com/common/oauth2/nativeclient`
-   - It is a multi-tenant app. ("Accounts in any organizational directory" is checked)
    - Has at least the following permissions enabled:
-     - `EWS.AccessAsUser.All` (Microsoft Graph)
-     - `full_access_as_app` (Office 365 Exchange Online)
-   - **OAuth2** and **Impersonation** are enabled:
+     - **Application**: `full_access_as_app` (Office 365 Exchange Online)
+     - **Delegated**: `EWS.AccessAsUser.All` (Microsoft Graph)
+     - ![API Permissions](./devdata/api-permissions.png)
+   - **OAuth2** and **Impersonation** are enabled (optionally):
      - From an Administrator PowerShell console, install [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement/2.0.5)
        module.
-     - `Import-Module ExchangeOnlineManagement`
-     - `Connect-ExchangeOnline -UserPrincipalName <e-mail>`
-     - `Set-OrganizationConfig -OAuth2ClientProfileEnabled $true`
+     - Login:
+       - `Import-Module ExchangeOnlineManagement`
+       - `Connect-ExchangeOnline -UserPrincipalName <e-mail>`
+     - OAuth2:
+       - `Set-OrganizationConfig -OAuth2ClientProfileEnabled $true`
        - Check status with: `Get-OrganizationConfig | Format-Table Name,OAuth* -Auto`
-     - `New-ManagementRoleAssignment -name:impersonationAssignmentName -Role:ApplicationImpersonation -User:<e-mail>`
+     - Impersonation:
+       - `New-ManagementRoleAssignment -name:impersonationAssignmentName -Role:ApplicationImpersonation -User:<e-mail>`
 
 2. Create a secret called `email_oauth_google/microsoft` in Control Room's Vault with
    the following entries (and make sure to connect **VSCode** to the online secrets
@@ -49,7 +54,7 @@ If you don't want to use the online cloud Vault:
 1. Make a copy of the [vault.yaml](./devdata/vault.yaml) in a safe place and update the
    keys as already instructed above at the online Vault step.
 2. Change the `RPA_SECRET_FILE` env var path in the
-   [local-env.json](./devdata/local-env.json) in order to make it point to your secrets
+   [env-local.json](./devdata/env-local.json) in order to make it point to your secrets
    *.yaml* file above. (then rename this file to *env.json* if you want it picked up
    automatically by **VSCode**)
 

@@ -72,7 +72,10 @@ Send Microsoft Email
 
     ExtendedExchange.Authorize    ${username}
     ...    autodiscover=${False}    server=outlook.office365.com
-    ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
+    # ...    ${SECRETS}[password]
+    # Uncomment the password above and remove the lines below when doing basic auth
+    #  with an "App Password" on MFA enabled accounts.
+    # ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID
     ...    client_secret=${SECRETS}[client_secret]  # app password

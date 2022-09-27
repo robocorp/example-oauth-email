@@ -13,5 +13,5 @@ dependencies:
   - pip:
       # Define pip packages here.
       # https://pypi.org/
-      - PyJWT==2.4.0
-      - rpaframework==16.3.0 # https://rpaframework.org/releasenotes.html
+      - PyJWT==2.5.0
+      - rpaframework==17.0.1 # https://rpaframework.org/releasenotes.html

@@ -27,7 +27,8 @@ Secrets Setup
     ${secret_name} =    Get Work Item Variable    secret_name
     ${secrets} =    Get Secret    ${secret_name}
     Set Global Variable    ${SECRETS}    ${secrets}
-    Import Library    ExtendedExchange    secret_name=${secret_name}
+    Import Library    RPA.Email.Exchange
+    ...    vault_name=${secret_name}    vault_token_key=token
 
 
 *** Tasks ***
@@ -70,16 +71,19 @@ Send Google Email
 Send Microsoft Email
     ${username} =    Get Work Item Variable    username
 
-    ExtendedExchange.Authorize    ${username}
+    RPA.Email.Exchange.Authorize    ${username}
     ...    autodiscover=${False}    server=outlook.office365.com
-    ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
+    # ...    ${SECRETS}[password]
+    # Uncomment the password above and remove the lines below when doing basic auth
+    #  with an "App Password" on MFA enabled accounts.
+    # ...    access_type=IMPERSONATE  # app impersonates the user (to send on its behalf)
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID
     ...    client_secret=${SECRETS}[client_secret]  # app password
     # The entire token structure auto refreshes when it expires.
     ...    token=${SECRETS}[token]  # token dict (access, refresh, scopes etc.)
 
-    ExtendedExchange.Send Message    recipients=${username}
+    RPA.Email.Exchange.Send Message    recipients=${username}
     ...    subject=OAuth2 Exchange message from RPA robot
     ...    body=Congrats! You're using Modern Authentication.
     ...    save=${True}

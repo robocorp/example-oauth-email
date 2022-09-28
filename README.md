@@ -28,7 +28,7 @@
    - Has at least the following permissions enabled:
      - **Application**: `full_access_as_app` (Office 365 Exchange Online)
      - **Delegated**: `EWS.AccessAsUser.All` (Microsoft Graph)
-     - ![API Permissions](./devdata/api-permissions.png)
+     - ![API Permissions](https://raw.githubusercontent.com/robocorp/example-oauth-email/master/devdata/api-permissions.png)
    - **OAuth2** and **Impersonation** are enabled (optionally):
      - From an Administrator PowerShell console, install [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement/2.0.5)
        module.
@@ -51,12 +51,13 @@
 ### Using the local vault
 
 If you don't want to use the online cloud Vault:
-1. Make a copy of the [vault.yaml](./devdata/vault.yaml) in a safe place and update the
-   keys as already instructed above at the online Vault step.
+1. Make a copy of the [vault.yaml](https://github.com/robocorp/example-oauth-email/blob/master/devdata/vault.yaml)
+   in a safe place and update the keys as already instructed above at the online Vault
+   step.
 2. Change the `RPA_SECRET_FILE` env var path in the
-   [env-local.json](./devdata/env-local.json) in order to make it point to your secrets
-   *.yaml* file above. (then rename this file to *env.json* if you want it picked up
-   automatically by **VSCode**)
+   [env-local.json](https://github.com/robocorp/example-oauth-email/blob/master/devdata/env-local.json)
+   in order to make it point to your secrets *.yaml* file above. (then rename this file
+   to *env.json* if you want it picked up automatically by **VSCode**)
 
 ## Robot run
 
@@ -69,8 +70,8 @@ Run with **VSCode** or **rcc** the following tasks in order:
      Items either **google** or **microsoft**. (and continue with the same in the next
      step)
      - Don't forget to configure your `username` (and optionally `tenant`) field in the
-       Work Items *.json* file for either [google](./devdata/work-items-in/google/work-items.json)
-       or [microsoft](./devdata/work-items-in/microsoft/work-items.json).
+       Work Items *.json* file for either [google](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/google/work-items.json)
+       or [microsoft](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/microsoft/work-items.json).
    - With Google, you'll see the auth code displayed in the browser window, whether
      with Microsoft you'll find it in the address bar.
 2. `Send Google/Microsoft Email`: Sends a test e-mail to yourself given the credentials

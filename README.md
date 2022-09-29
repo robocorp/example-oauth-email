@@ -27,7 +27,7 @@
      - Redirect URI can be: `https://login.microsoftonline.com/common/oauth2/nativeclient`
    - Has at least the following permission(s) enabled:
      - **Delegated**: `EWS.AccessAsUser.All` (Office 365 Exchange Online)
-     - ![API Permissions](https://raw.githubusercontent.com/robocorp/example-oauth-email/master/devdata/api-permissions.png)
+       ![API Permissions](https://raw.githubusercontent.com/robocorp/example-oauth-email/master/devdata/api-permissions.png)
    - **OAuth2** and **Impersonation** are enabled:
      - From an Administrator PowerShell console, install [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement/2.0.5)
        module.

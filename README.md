@@ -25,20 +25,20 @@
      checked)
    - The type of the application is a "Web App".
      - Redirect URI can be: `https://login.microsoftonline.com/common/oauth2/nativeclient`
-   - Has at least the following permissions enabled:
-     - **Application**: `full_access_as_app` (Office 365 Exchange Online)
-     - **Delegated**: `EWS.AccessAsUser.All` (Microsoft Graph)
+   - Has at least the following permission(s) enabled:
+     - **Delegated**: `EWS.AccessAsUser.All` (Office 365 Exchange Online)
      - ![API Permissions](https://raw.githubusercontent.com/robocorp/example-oauth-email/master/devdata/api-permissions.png)
-   - **OAuth2** and **Impersonation** are enabled (optionally):
+   - **OAuth2** and **Impersonation** are enabled:
      - From an Administrator PowerShell console, install [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement/2.0.5)
        module.
-     - Login:
+     - Login with the tenant Admin:
        - `Import-Module ExchangeOnlineManagement`
        - `Connect-ExchangeOnline -UserPrincipalName <e-mail>`
-     - OAuth2:
+     - OAuth2 enabling:
        - `Set-OrganizationConfig -OAuth2ClientProfileEnabled $true`
        - Check status with: `Get-OrganizationConfig | Format-Table Name,OAuth* -Auto`
-     - Impersonation:
+     - Impersonation for any account (required to be able to authorize the app and send
+       e-mails):
        - `New-ManagementRoleAssignment -name:impersonationAssignmentName -Role:ApplicationImpersonation -User:<e-mail>`
 
 2. Create a secret called `email_oauth_google/microsoft` in Control Room's Vault with

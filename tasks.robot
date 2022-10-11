@@ -73,7 +73,7 @@ Send Microsoft Email
 
     RPA.Email.Exchange.Authorize    ${username}
     ...    autodiscover=${False}    server=outlook.office365.com
-    # ...    ${SECRETS}[password]
+    # ...    password=${SECRETS}[password]
     # Uncomment the password above and remove the lines below when doing basic auth
     #  with an "App Password" on MFA enabled accounts.
     # ...    access_type=IMPERSONATION  # app impersonates the user (to send on its behalf)

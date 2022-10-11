@@ -58,10 +58,12 @@ Send Google Email
     ${password} =    Generate Google Oauth2 String
     ...    ${SECRETS}[client_id]    ${SECRETS}[client_secret]
     ...    token=${SECRETS}[token]    username=${username}
-    # Log To Console    Password: ${password}  # don't leak it
 
-    RPA.Email.ImapSmtp.Authorize    account=${username}    password=${password}
-    ...    is_oauth=${True}
+    RPA.Email.ImapSmtp.Authorize    account=${username}
+    # ...    password=${SECRETS}[password]
+    # Uncomment the password above and remove the lines below when doing basic auth
+    #  with an "App Password" on MFA enabled accounts.
+    ...    is_oauth=${True}    password=${password}
 
     RPA.Email.ImapSmtp.Send Message    sender=${username}    recipients=${username}
     ...    subject=E-mail sent through the OAuth2 flow

@@ -1,29 +1,35 @@
 *** Settings ***
-Documentation       Send e-mail with Google or Microsoft in a more secure way.
-...                 (check devdata/vault.yaml for secrets example)
+Documentation       Send an e-mail with Google or Microsoft in a more secure way.
+...                 (check devdata/vault.yaml for learning about the secrets structure)
 
 Library    Collections
-Library    OAuth2  # robot internal library for the Authorization Code flow
 Library    RPA.Browser.Selenium
 Library    RPA.Dialogs
-Library    RPA.Email.ImapSmtp    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com
+Library    RPA.Email.ImapSmtp
+# Change these servers when working with other providers.
+...    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com
 Library    RPA.Robocorp.Vault
-Library    RPA.RobotLogListener
 Library    RPA.Robocorp.WorkItems
 
 Suite Setup    Secrets Setup
 
 
 *** Variables ***
+# Global secrets object pulled from the Vault and stored back into the Vault on token
+#  updates.
 ${SECRETS}
 
 
 *** Keywords ***
 Secrets Setup
-    @{protected} =    Create List    Authorize And Get Token
-    ...    Generate Google Oauth2 String    Set To Dictionary
-    Register Protected Keywords    ${protected}
+    # @{protected} =    Create List    Authorize And Get Token
+    # ...    Generate Google Oauth2 String    Set To Dictionary
+    # Register Protected Keywords    ${protected}
 
+    # Based on the input Work Item data (google/microsoft), decide what Vault to use
+    #  and import the `Exchange` library with such a Vault set. This information is
+    #  important for the library in order to know where to update the newly obtained
+    #  token during auto-refresh (handled internally).
     ${secret_name} =    Get Work Item Variable    secret_name
     ${secrets} =    Get Secret    ${secret_name}
     Set Global Variable    ${SECRETS}    ${secrets}
@@ -33,21 +39,24 @@ Secrets Setup
 
 *** Tasks ***
 Init OAuth Flow
-    &{config} =    Get Work Item Variables
-    ${url} =    Generate Permission Url    ${SECRETS}[client_id]
-    ...    provider=${config}[provider]    tenant=${config}[tenant]
-    Log To Console    Permission URL: ${url}
+    [Documentation]    Start the OAuth2 flow by generating a permission URL, which the
+    ...    user has to surf in order to authenticate itself and authorize the app to
+    ...    send e-mails on its behalf.
+
+    ${tenant} =    Get Work Item Variable    tenant
+
+    ${url} =    Generate OAuth URL    ${SECRETS}[client_id]    tenant=${tenant}
+    Log To Console    Start the OAuth2 flow: ${url}
     Open Available Browser    ${url}
 
     Add heading       Enter authorization code
     Add text input    code    label=Code
     ${result} =    Run dialog
-    ${token} =    Authorize And Get Token    ${SECRETS}[client_id]
-    ...    ${SECRETS}[client_secret]    auth_code=${result.code}
-    ...    provider=${config}[provider]    tenant=${config}[tenant]
+    ${token} =    Get OAuth Token    ${SECRETS}[client_secret]    ${result.code}
+    ...    tenant=${tenant}
     Set To Dictionary    ${SECRETS}    token    ${token}
     Set Secret    ${SECRETS}
-    Log    The refresh token was just saved in the Vault. (keep it private)
+    Log    The new token was just updated in the Vault. (keep it private)
 
 
 Send Google Email
@@ -75,9 +84,6 @@ Send Microsoft Email
 
     RPA.Email.Exchange.Authorize    ${username}
     ...    autodiscover=${False}    server=outlook.office365.com
-    # ...    password=${SECRETS}[password]
-    # Uncomment the password above and remove the lines below when doing basic auth
-    #  with an "App Password" on MFA enabled accounts.
     # ...    access_type=IMPERSONATION  # app impersonates the user (to send on its behalf)
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID

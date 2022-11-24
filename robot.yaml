@@ -1,6 +1,8 @@
 tasks:
-  Init OAuth Flow:
-    robotTaskName: Init OAuth Flow
+  Init Google OAuth:
+    robotTaskName: Init Google OAuth
+  Init Microsoft OAuth:
+    robotTaskName: Init Google OAuth
   Send Google Email:
     robotTaskName: Send Google Email
   Send Microsoft Email:

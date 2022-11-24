@@ -7,9 +7,10 @@ Library    RPA.Browser.Selenium
 Library    RPA.Dialogs
 Library    RPA.Email.ImapSmtp
 # Change these servers when working with other providers.
-...    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com
+...    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com    provider=google
 Library    RPA.Robocorp.Vault
 Library    RPA.Robocorp.WorkItems
+Library    RPA.RobotLogListener
 
 Suite Setup    Secrets Setup
 
@@ -22,9 +23,8 @@ ${SECRETS}
 
 *** Keywords ***
 Secrets Setup
-    # @{protected} =    Create List    Authorize And Get Token
-    # ...    Generate Google Oauth2 String    Set To Dictionary
-    # Register Protected Keywords    ${protected}
+    @{protected} =    Create List    Set To Dictionary
+    Register Protected Keywords    ${protected}
 
     # Based on the input Work Item data (google/microsoft), decide what Vault to use
     #  and import the `Exchange` library with such a Vault set. This information is
@@ -33,45 +33,64 @@ Secrets Setup
     ${secret_name} =    Get Work Item Variable    secret_name
     ${secrets} =    Get Secret    ${secret_name}
     Set Global Variable    ${SECRETS}    ${secrets}
+
+    ${tenant} =    Get Work Item Variable    tenant
     Import Library    RPA.Email.Exchange
-    ...    vault_name=${secret_name}    vault_token_key=token
+    ...    vault_name=${secret_name}    vault_token_key=token    tenant=${tenant}
 
 
-*** Tasks ***
-Init OAuth Flow
+Init Any OAuth Flow
     [Documentation]    Start the OAuth2 flow by generating a permission URL, which the
     ...    user has to surf in order to authenticate itself and authorize the app to
     ...    send e-mails on its behalf.
+    [Arguments]    ${generate_oauth_url}    ${get_oauth_token}
 
-    ${tenant} =    Get Work Item Variable    tenant
-
-    ${url} =    Generate OAuth URL    ${SECRETS}[client_id]    tenant=${tenant}
+    ${url} =    Run Keyword    ${generate_oauth_url}    ${SECRETS}[client_id]
     Log To Console    Start the OAuth2 flow: ${url}
     Open Available Browser    ${url}
 
-    Add heading       Enter authorization code
-    Add text input    code    label=Code
+    Add heading       Enter response URL
+    Add text input    url    label=URL
     ${result} =    Run dialog
-    ${token} =    Get OAuth Token    ${SECRETS}[client_secret]    ${result.code}
-    ...    tenant=${tenant}
+    ${token} =    Run Keyword    ${get_oauth_token}    ${SECRETS}[client_secret]
+    ...    ${result.url}
     Set To Dictionary    ${SECRETS}    token    ${token}
     Set Secret    ${SECRETS}
     Log    The new token was just updated in the Vault. (keep it private)
 
 
+*** Tasks ***
+Init Google OAuth
+    Init Any OAuth Flow
+    ...    RPA.Email.ImapSmtp.Generate OAuth URL
+    ...    RPA.Email.ImapSmtp.Get OAuth Token
+
+
+Init Microsoft OAuth
+    Init Any OAuth Flow
+    ...    RPA.Email.Exchange.Generate OAuth URL
+    ...    RPA.Email.Exchange.Get OAuth Token
+
+
 Send Google Email
+    [Documentation]    TODO
+
     ${username} =    Get Work Item Variable    username
 
     # Once the password is generated, you can use it for one hour, then you'll have to
-    #  generate a new one. (as it expires)
-    ${password} =    Generate Google Oauth2 String
-    ...    ${SECRETS}[client_id]    ${SECRETS}[client_secret]
-    ...    token=${SECRETS}[token]    username=${username}
+    #  generate a new one after a token refresh. (as it expires)
+    ${token} =    RPA.Email.ImapSmtp.Refresh OAuth Token    ${SECRETS}[client_id]
+    ...    ${SECRETS}[client_secret]    ${SECRETS}[token]
+    Set To Dictionary    ${SECRETS}    token    ${token}
+    Set Secret    ${SECRETS}
+    Log    The refreshed token was just updated in the Vault. (keep it private)
+    ${password} =    RPA.Email.ImapSmtp.Generate OAuth String    ${username}
+    ...    ${SECRETS}[token][access_token]
 
     RPA.Email.ImapSmtp.Authorize    account=${username}
     # ...    password=${SECRETS}[password]
-    # Uncomment the password above and remove the lines below when doing basic auth
-    #  with an "App Password" on MFA enabled accounts.
+    # Uncomment the `password` line above and remove the lines below when doing basic
+    #  auth with an "App Password" on MFA enabled accounts.
     ...    is_oauth=${True}    password=${password}
 
     RPA.Email.ImapSmtp.Send Message    sender=${username}    recipients=${username}
@@ -80,6 +99,10 @@ Send Google Email
 
 
 Send Microsoft Email
+    [Documentation]    Send an e-mail with Office365 Exchange. Since password isn't an
+    ...    option anymore, the authorization can be made through the OAuth2 flow only,
+    ...    meaning you have to provide the Client credentials and a token.
+
     ${username} =    Get Work Item Variable    username
 
     RPA.Email.Exchange.Authorize    ${username}
@@ -88,8 +111,8 @@ Send Microsoft Email
     ...    is_oauth=${True}  # use the OAuth2 auth code flow
     ...    client_id=${SECRETS}[client_id]  # app ID
     ...    client_secret=${SECRETS}[client_secret]  # app password
-    # The entire token structure auto refreshes when it expires.
-    ...    token=${SECRETS}[token]  # token dict (access, refresh, scopes etc.)
+    # The entire token structure auto-refreshes when it expires.
+    ...    token=${SECRETS}[token]  # token dict (access, refresh, scope etc.)
 
     RPA.Email.Exchange.Send Message    recipients=${username}
     ...    subject=OAuth2 Exchange message from RPA robot

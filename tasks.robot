@@ -84,9 +84,9 @@ Send Google Email
     Set To Dictionary    ${SECRETS}    token    ${token}
     Set Secret    ${SECRETS}
     Log    The refreshed token was just updated in the Vault. (keep it private)
+
     ${password} =    RPA.Email.ImapSmtp.Generate OAuth String    ${username}
     ...    ${SECRETS}[token][access_token]
-
     RPA.Email.ImapSmtp.Authorize    account=${username}
     # ...    password=${SECRETS}[password]
     # Uncomment the `password` line above and remove the lines below when doing basic

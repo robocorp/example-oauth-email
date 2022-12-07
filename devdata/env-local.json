@@ -2,5 +2,6 @@
     "RPA_WORKITEMS_ADAPTER": "RPA.Robocorp.WorkItems.FileAdapter",
     "RPA_INPUT_WORKITEM_PATH": "devdata/work-items-in/microsoft/work-items.json",
     "RPA_SECRET_MANAGER": "RPA.Robocorp.Vault.FileSecrets",
-    "RPA_SECRET_FILE": "~/Secrets/example-oauth-email.yaml"
+    "RPA_SECRET_FILE": "~/Secrets/example-oauth-email.yaml",
+    "TOKEN_AS_JSON": "0"
 }

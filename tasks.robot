@@ -8,6 +8,7 @@ Library    RPA.Dialogs
 Library    RPA.Email.ImapSmtp
 # Change these servers when working with other providers.
 ...    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com    provider=google
+Library    RPA.JSON
 Library    RPA.Robocorp.Vault
 Library    RPA.Robocorp.WorkItems
 Library    RPA.RobotLogListener
@@ -23,7 +24,8 @@ ${SECRETS}
 
 *** Keywords ***
 Secrets Setup
-    @{protected} =    Create List    Set To Dictionary
+    @{protected} =    Create List    Set To Dictionary    Token Dict From JSON
+    ...    Token Dict To JSON
     Register Protected Keywords    ${protected}
 
     # Based on the input Work Item data (google/microsoft), decide what Vault to use
@@ -37,6 +39,31 @@ Secrets Setup
     ${tenant} =    Get Work Item Variable    tenant
     Import Library    RPA.Email.Exchange
     ...    vault_name=${secret_name}    vault_token_key=token    tenant=${tenant}
+
+
+Token Dict To JSON
+    [Documentation]    Serialize a token dictionary to its string form.
+    [Arguments]    ${token}
+
+    IF    "%{TOKEN_AS_JSON=0}" == "1"
+        ${token} =    Convert JSON To String    ${token}
+    END
+
+    RETURN    ${token}
+
+
+Token Dict From JSON
+    [Documentation]    Deserialize a token dictionary from its string form.
+    [Arguments]    ${token}
+
+    ${status}    ${resp} =    Run Keyword And Ignore Error
+    ...    Convert String to JSON    ${token}
+    IF    "${status}" == "PASS"
+        RETURN    ${resp}
+    END
+
+    Log    Returning token as it is (object)
+    RETURN    ${token}
 
 
 Init Any OAuth Flow
@@ -54,6 +81,7 @@ Init Any OAuth Flow
     ${result} =    Run dialog
     ${token} =    Run Keyword    ${get_oauth_token}    ${SECRETS}[client_secret]
     ...    ${result.url}
+    ${token} =    Token Dict To JSON    ${token}
     Set To Dictionary    ${SECRETS}    token    ${token}
     Set Secret    ${SECRETS}
     Log    The new token was just updated in the Vault. (keep it private)
@@ -76,17 +104,20 @@ Send Google Email
     [Documentation]    TODO
 
     ${username} =    Get Work Item Variable    username
+    ${token} =    Token Dict From JSON    ${SECRETS}[token]
 
     # Once the password is generated, you can use it for one hour, then you'll have to
     #  generate a new one after a token refresh. (as it expires)
     ${token} =    RPA.Email.ImapSmtp.Refresh OAuth Token    ${SECRETS}[client_id]
-    ...    ${SECRETS}[client_secret]    ${SECRETS}[token]
+    ...    ${SECRETS}[client_secret]    ${token}
+    ${token} =    Token Dict To JSON    ${token}
     Set To Dictionary    ${SECRETS}    token    ${token}
     Set Secret    ${SECRETS}
     Log    The refreshed token was just updated in the Vault. (keep it private)
 
+    ${token} =    Token Dict From JSON    ${SECRETS}[token]
     ${password} =    RPA.Email.ImapSmtp.Generate OAuth String    ${username}
-    ...    ${SECRETS}[token][access_token]
+    ...    ${token}[access_token]
     RPA.Email.ImapSmtp.Authorize    account=${username}
     # ...    password=${SECRETS}[password]
     # Uncomment the `password` line above and remove the lines below when doing basic
@@ -104,6 +135,7 @@ Send Microsoft Email
     ...    meaning you have to provide the Client credentials and a token.
 
     ${username} =    Get Work Item Variable    username
+    ${token} =    Token Dict From JSON    ${SECRETS}[token]
 
     RPA.Email.Exchange.Authorize    ${username}
     ...    autodiscover=${False}    server=outlook.office365.com
@@ -112,7 +144,7 @@ Send Microsoft Email
     ...    client_id=${SECRETS}[client_id]  # app ID
     ...    client_secret=${SECRETS}[client_secret]  # app password
     # The entire token structure auto-refreshes when it expires.
-    ...    token=${SECRETS}[token]  # token dict (access, refresh, scope etc.)
+    ...    token=${token}  # token dict (access, refresh, scope etc.)
 
     RPA.Email.Exchange.Send Message    recipients=${username}
     ...    subject=OAuth2 Exchange message from RPA robot

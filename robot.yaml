@@ -2,7 +2,7 @@ tasks:
   Init Google OAuth:
     robotTaskName: Init Google OAuth
   Init Microsoft OAuth:
-    robotTaskName: Init Google OAuth
+    robotTaskName: Init Microsoft OAuth
   Send Google Email:
     robotTaskName: Send Google Email
   Send Microsoft Email:

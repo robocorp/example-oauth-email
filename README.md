@@ -42,9 +42,6 @@
    - Has at least the following permission(s) enabled:
      - **Delegated**: `EWS.AccessAsUser.All` (Office 365 Exchange Online)
        ![API Permissions](https://raw.githubusercontent.com/robocorp/example-oauth-email/master/docs/api-permissions.png)
-     - Read more on EWS access and impersonation:
-       - [Impersonation and EWS in Exchange](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/impersonation-and-ews-in-exchange)
-       - [Configure impersonation](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/how-to-configure-impersonation)
    - **OAuth2** and **Impersonation** are enabled:
      - From an Administrator PowerShell console, install [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement/2.0.5)
        module.
@@ -57,10 +54,14 @@
      - Impersonation for a specific account (in order to be able to let the app send
        e-mails with that account):
        - `New-ManagementRoleAssignment -name:<name> -Role:ApplicationImpersonation -User:<e-mail>`
+       - `<name>`s have to be unique.
+     - Read more on EWS access and impersonation:
+       - [Impersonation and EWS in Exchange](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/impersonation-and-ews-in-exchange)
+       - [Configure impersonation](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/how-to-configure-impersonation)
 
 2. Create a secret called `email_oauth_google/microsoft` in Control Room's Vault with
    the following entries (and make sure to connect **VSCode** to the online secrets
-   vault first):
+   Vault first):
    - `client_id`: Your app client ID (obtained at step **1.**)
    - `client_secret`: Your app client secret (obtained at step **1.**)
    - `token`: You can leave it blank since this will be overridden by the robot
@@ -73,8 +74,11 @@ If you don't want to use the online cloud Vault:
    step.
 2. Change the `RPA_SECRET_FILE` env var path in the
    [env-local.json](https://github.com/robocorp/example-oauth-email/blob/master/devdata/env-local.json)
-   in order to point it to your secrets *.yaml* file above. (then rename this file
-   to *env.json* if you want it picked-up automatically by **VSCode**)
+   in order to make it point to your secrets *.yaml* file above.
+   - Only [env.json](https://github.com/robocorp/example-oauth-email/blob/master/devdata/env.json)
+     is picked-up automatically by **VSCode**. So copy the content of the other inside
+     this one if you really want to use the local Vault.
+   - With **rcc** you have to pass the preferred *env* file with `-e`.
 
 ## Robot run
 
@@ -92,7 +96,9 @@ Run with **VSCode** or **rcc** the following tasks in order:
        or [microsoft](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/microsoft/work-items.json).
    - For convenience (copy-pasting local token into Control Room's Vault), run the bot
      with `TOKEN_AS_JSON=1` env var, so you get a string version of the entire token
-     dictionary in your Vault local file.
+     dictionary in your Vault local file. (look under this *env-local.json*
+     [entry](https://github.com/robocorp/example-oauth-email/blob/master/devdata/env-local.json#L6)
+     on how to enable it)
    - This step is required to be run once, requires human intervention (attended) and
      once you get your token generated it will stay valid (by refreshing itself)
      indefinitely.
@@ -110,7 +116,7 @@ Run with **VSCode** or **rcc** the following tasks in order:
     `Refresh OAuth Token` and `Generate OAuth String` keywords. (as it doesn't have
     auto-refresh capability, so you need to do it yourself in the bot)
   - With Microsoft, the token refreshes itself when it expires (internally handled by
-    the library) and is automatically updated into Vault as well.
+    the library) and is automatically updated into the Vault as well.
 - Learn more about OAuth2:
   - [Google](https://developers.google.com/identity/protocols/oauth2)
   - [Microsoft](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)

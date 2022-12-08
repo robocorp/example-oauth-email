@@ -1,7 +1,6 @@
 [
   {
     "payload": {
-      "provider": "google",
       "secret_name": "email_oauth_google",
       "tenant": null,
       "username": "cosmin@robocorp.com"

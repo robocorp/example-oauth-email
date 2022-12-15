@@ -71,7 +71,7 @@ Read more on client setup with Google:
 
 1. Create an Exchange Online [sandbox](https://learn.microsoft.com/en-us/office/developer-program/microsoft-365-developer-program-get-started)
    (or use your current tenant).
-2. Then go to Azure Active Directory's [App registrations](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps)
+2. Then go to Azure Active Directory's *[App registrations](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps)*
    page and follow [these](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
    app configuration instructions.
 3. Ensure you created a "Web" app and have the following checked:

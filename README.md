@@ -1,17 +1,25 @@
 # E-mail authorization with OAuth2 flow
 
-With this example, you will learn how to send e-mails with GMail or Exchange. The
+In this example, you will learn how to send e-mails with GMail or Exchange. The
 sending is the easy part, but since these providers started to disable the usage of
 passwords, it is required now to do a more complex kind of authorization which relies
 on tokens. And that's usually done through the OAuth2
 [Authorization Code Grant](https://oauth.net/2/grant-types/authorization-code/) flow.
 
+If you find this to be too complex to configure and use, there are alternatives like:
+- [Browser](https://robocorp.com/docs/libraries/rpa-framework/rpa-browser-selenium)
+  automation by logging in and sending the e-mail from there as you normally do.
+  (check this MFA [example](https://robocorp.com/portal/robot/robocorp/example-mfa-otp)
+  for learning how to setup OTP and fully automate the authentication step)
+- Outlook app automation with [RPA.Outlook.Application](https://robocorp.com/docs/libraries/rpa-framework/rpa-outlook-application)
+  (mainly for Microsoft).
+
 ## Tasks
 
 Before sending an e-mail to yourself with `Send Google/Microsoft Email`, you have to
 place a token in the Vault with `Init Google/Microsoft OAuth` task first. This
-initializer step is required once, then you can send as many e-mails you want with such
-token already configured.
+initializer step is required once, then you can send as many e-mails as you want with
+such a token already configured.
 
 ### Google (GMail)
 
@@ -35,21 +43,21 @@ e-mails for you. For this, certain settings are required:
 ### Google (GMail)
 
 1. You have to configure the *[Consent Screen](https://console.cloud.google.com/apis/credentials/consent)*
-beforehand:
-- Add a name and your e-mail address.
-- Under "Your restricted scopes" add the `https://mail.google.com/` GMail API scope.
-  (so you give the app full permissions on your mailbox)
-- In order to see the scope above (client app permission), you have to enable the
-  [Gmail API](https://console.cloud.google.com/marketplace/product/google/gmail.googleapis.com)
-  first.
-- Add as test users the e-mail addresses you want to allow to complete the flow. This
-  is required as long as the app remains private & unpublished.
+   beforehand:
+   - Add a name and your e-mail address.
+   - Under "Your restricted scopes" add the `https://mail.google.com/` GMail API scope.
+     (so you give the app full permissions on your mailbox)
+   - In order to see the scope above (client app permission), you have to enable the
+     [Gmail API](https://console.cloud.google.com/marketplace/product/google/gmail.googleapis.com)
+     first.
+   - Add as test users the e-mail addresses you want to allow to complete the flow. This
+     is required as long as the app remains private & unpublished.
 
 2. Now go to *[Cloud Credentials](https://console.cloud.google.com/apis/credentials)*
-and click "+ CREATE CREDENTIALS" -> "OAuth client ID". And select the following:
-- Application type: **Web application**
-- Add redirect URI: `https://developers.google.com/oauthplayground`
-- Take a note of the obtained client credentials as you'll need them later on.
+   and click "+ CREATE CREDENTIALS" -> "OAuth client ID". And select the following:
+   - Application type: **Web application**
+   - Add redirect URI: `https://developers.google.com/oauthplayground`
+   - Take a note of the obtained client credentials as you'll need them later on.
 
 Read more on client setup with Google:
 - [Setting up OAuth 2.0](https://support.google.com/cloud/answer/6158849?hl=en)
@@ -83,7 +91,7 @@ Read more on client setup with Google:
    - Impersonation for a specific account (in order to be able to let the app send
      e-mails with that account):
      - `New-ManagementRoleAssignment -name:<name> -Role:ApplicationImpersonation -User:<e-mail>`
-     - `<name>`s has to be unique.
+     - `<name>` has to be unique.
    - Read more on EWS access and impersonation:
      - [Impersonation and EWS in Exchange](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/impersonation-and-ews-in-exchange)
      - [Configure impersonation](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/how-to-configure-impersonation)
@@ -120,7 +128,7 @@ If you can't use the online cloud Vault:
 
 Run with **VSCode** or **rcc** the following tasks in order:
 1. `Init Google/Microsoft OAuth`: Opens a browser window for you to authenticate and
-   finally getting a redirect response URL in the address bar. Once you get here, the
+   finally getting a redirect response URL in the address bar. Once you get there, the
    browser closes and the token gets generated and updated in the Vault.
    - Based on the service you want to send the e-mail with, pick from the listed Work
      Items either **google** or **microsoft**. (and continue with the same in the next
@@ -138,10 +146,10 @@ Run with **VSCode** or **rcc** the following tasks in order:
    - If by any chance you can't login in the opened & automated browser window, open
      that auth URL (which is also printed to console during the run) in your own
      browser and continue the flow from there. When you finish, copy-paste the final
-     URL found in the address bar from this browser into the one opened automatically,
+     URL found in the address bar from your browser into the one opened by the robot,
      then press Enter.
    - This step is required to be run once, requires human intervention (attended) and
-     once you get your token generated it will stay valid (by refreshing itself)
+     once you get your token generated, it will stay valid (by refreshing itself)
      indefinitely.
 2. `Send Google/Microsoft Email`: Sends a test e-mail to yourself given the credentials
    configured in the Vault during the previous step.

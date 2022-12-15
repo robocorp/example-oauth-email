@@ -27,11 +27,15 @@ such a token already configured.
    automatically in the Vault.
 2. `Send Google Email`: Send an e-mail to yourself with GMail.
 
+Watch demo: https://www.loom.com/share/a0ce24d6e1cf4a1e80e4888f9a2483bc
+
 ### Microsoft (Exchange)
 
 1. `Init Microsoft OAuth`: Authenticate user, authorize app and have the token
    generated automatically in the Vault.
 2. `Send Microsoft Email`: Send an e-mail to yourself with Microsoft.
+
+Watch demo: https://www.loom.com/share/e385b021b4c44761811e5e3cfa66de13
 
 ## Client app setup
 

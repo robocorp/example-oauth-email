@@ -110,16 +110,6 @@ Init Google OAuth
     ...    RPA.Email.ImapSmtp.Get OAuth Token
 
 
-Init Microsoft OAuth
-    [Documentation]    Do the OAuth2 flow and obtain a token for Exchange e-mail
-    ...    sending.
-
-    # Common logic with keywords coming from the `Exchange` library.
-    Init Any OAuth Flow
-    ...    RPA.Email.Exchange.Generate OAuth URL
-    ...    RPA.Email.Exchange.Get OAuth Token
-
-
 Send Google Email
     [Documentation]    Send e-mail with GMail. Currently only App Passwords are allowed
     ...    for the basic/legacy flow and for the secure way, the OAuth2 flow usage is
@@ -149,6 +139,16 @@ Send Google Email
     RPA.Email.ImapSmtp.Send Message    sender=${username}    recipients=${username}
     ...    subject=E-mail sent through the OAuth2 flow
     ...    body=I hope you find this flow easy to understand and use. (keep the refresh token private at all times)
+
+
+Init Microsoft OAuth
+    [Documentation]    Do the OAuth2 flow and obtain a token for Exchange e-mail
+    ...    sending.
+
+    # Common logic with keywords coming from the `Exchange` library.
+    Init Any OAuth Flow
+    ...    RPA.Email.Exchange.Generate OAuth URL
+    ...    RPA.Email.Exchange.Get OAuth Token
 
 
 Send Microsoft Email

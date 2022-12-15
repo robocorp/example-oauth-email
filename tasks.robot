@@ -4,7 +4,6 @@ Documentation       Send an e-mail with Google or Microsoft in a more secure way
 
 Library    Collections
 Library    RPA.Browser.Selenium
-Library    RPA.Dialogs
 Library    RPA.Email.ImapSmtp
 # Change these servers when working with other providers.
 ...    smtp_server=smtp.gmail.com    imap_server=imap.gmail.com    provider=google
@@ -86,14 +85,13 @@ Init Any OAuth Flow
     Log To Console    Start the OAuth2 flow: ${url}
     Open Available Browser    ${url}
 
-    # Completes the OAuth2 flow by using the response URL obtained above and pasted
-    #  into the shown dialog. With a keyword coming from the targeted library: ImapSmtp
-    #  or Exchange.
-    Add heading       Enter response URL
-    Add text input    url    label=URL
-    ${result} =    Run dialog
+    # Completes the OAuth2 flow by sending the response URL to the token retrieval
+    #  keyword. The keyword comes from the targeted library: `ImapSmtp` or `Exchange`.
+    Wait Until Location Contains    code=    timeout=300s
+    ...    message=Please authenticate and accept the consent faster
+    ${response_url} =    Get Location
     ${token} =    Run Keyword    ${get_oauth_token}    ${SECRETS}[client_secret]
-    ...    ${result.url}
+    ...    ${response_url}
 
     # Sets the obtained token (as serialized string or object) in the Vault.
     ${token} =    Token Dict To JSON    ${token}

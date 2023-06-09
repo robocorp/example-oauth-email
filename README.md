@@ -6,6 +6,13 @@ passwords, it is required now to do a more complex kind of authorization which r
 on tokens. And that's usually done through the OAuth2
 [Authorization Code Grant](https://oauth.net/2/grant-types/authorization-code/) flow.
 
+<table><td>:memo: **Note**:
+This more complex authorization flow must be done once via an attended run, but once
+completed, your automation using the final vault objects will be able to send and
+receive emails unattendedly. We recommend you use this portal bot to complete the
+initial setup within your workspace.</td></table>
+
+
 If you find this to be too complex to configure and use, there are alternatives like:
 - [Browser](https://robocorp.com/docs/libraries/rpa-framework/rpa-browser-selenium)
   automation by logging in and sending the e-mail from there as you normally do.
@@ -108,8 +115,10 @@ token itself needs an entry in the Vault so the robot can update its value in th
 
 ### Online Control Room Vault
 
-Create a secret called `email_oauth_google/microsoft` in Control Room's Vault with the
-following entries (and make sure to connect **VSCode** to the online Vault afterwards):
+Create a secret called `email_oauth_[service]` (where you replace `[service]` with either
+`google` or `microsoft` depending on the service you are configuring) in Control Room's
+Vault with the following entries (and make sure to connect **VSCode** to the online Vault
+afterwards):
 - `client_id`: Your app client ID.
 - `client_secret`: Your app client secret.
 - `token`: You can leave it blank since this will be overridden by the robot.
@@ -131,14 +140,15 @@ If you can't use the online cloud Vault:
 ## Robot run
 
 Run with **VSCode** or **rcc** the following tasks in order:
-1. `Init Google/Microsoft OAuth`: Opens a browser window for you to authenticate and
+1. `Init Google` / `Microsoft OAuth`: Opens a browser window for you to authenticate and
    finally getting a redirect response URL in the address bar. Once you get there, the
    browser closes and the token gets generated and updated in the Vault.
    - Based on the service you want to send the e-mail with, pick from the listed Work
      Items either **google** or **microsoft**. (and continue with the same in the next
      step)
-     - Don't forget to configure your `username` (and optionally `tenant`) field in the
-       Work Items *.json* file for either [google](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/google/work-items.json)
+     - **IMPORTANT**: Don't forget to configure your `username` (and optionally `tenant`)
+       field in the Work Items *.json* file for either
+       [google](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/google/work-items.json)
        or [microsoft](https://github.com/robocorp/example-oauth-email/blob/master/devdata/work-items-in/microsoft/work-items.json).
    - Now you should see your brand new `token` field updated and set in the Vault.
      (keep it private as this is like a password which grants access into your e-mail)
@@ -155,7 +165,7 @@ Run with **VSCode** or **rcc** the following tasks in order:
    - This step is required to be run once, requires human intervention (attended) and
      once you get your token generated, it will stay valid (by refreshing itself)
      indefinitely.
-2. `Send Google/Microsoft Email`: Sends a test e-mail to yourself given the credentials
+2. `Send Google` / `Microsoft Email`: Sends a test e-mail to yourself given the credentials
    configured in the Vault during the previous step.
    - This step can be fully automated and doesn't require the first step run each time.
      As once the `token` is set, it remains available until you revoke the refresh
